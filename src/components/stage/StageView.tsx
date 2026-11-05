@@ -57,7 +57,7 @@ const SAMPLE_QUEUE: QueueItem[] = [
   },
 ];
 
-// Letras Sincronizadas por Segundos (Estilo Cinema / LRC)
+// Letras Sincronizadas por Segundos (Estilo Teleprompter de Alta-Costura)
 const SAMPLE_LYRICS: LyricLine[] = [
   { id: '1', time: 0, text: '♪ Introdução Instrumental ♪' },
   { id: '2', time: 8, text: 'Quando o dia amanhece e a luz começa a brilhar' },
@@ -174,12 +174,12 @@ export const StageView: React.FC = () => {
   }, [isProducerOpen, handleNextTrack]);
 
   return (
-    <main className="w-screen h-screen bg-[#1A1A2E] text-white overflow-hidden p-8 lg:p-10 flex flex-col font-sans select-none">
+    <main className="w-screen h-screen bg-[#1A1A2E] text-white overflow-hidden p-8 lg:p-10 xl:p-12 flex flex-col font-sans select-none">
       {/* 
         1. Top Bar Editorial:
-        Apenas tipografia pura e respiração visual sobre o fundo sólido #1A1A2E.
+        Apenas tipografia pura sobre o fundo sólido #1A1A2E.
       */}
-      <header className="flex items-center justify-between pb-6 select-none shrink-0">
+      <header className="flex items-center justify-between pb-4 select-none shrink-0">
         <div className="flex items-center space-x-3">
           <span className="w-1.5 h-1.5 rounded-full bg-[#9575CD]" />
           <h1 className="text-xs font-semibold tracking-[0.25em] uppercase text-white/80">
@@ -207,15 +207,15 @@ export const StageView: React.FC = () => {
 
       {/* 
         2. Layout Principal de 2 Colunas:
-        - Esquerda (~74%): Tela de Letras Imersiva pura (foco total na tipografia).
-        - Direita (~26%): Lista da fila e QR Code flutuando diretamente no fundo escuro.
-        - Separação feita exclusivamente por espaçamento em branco (whitespace).
+        - Esquerda (~74%): Painel Tipográfico de Alta-Costura (Teleprompter de 3 linhas).
+        - Direita (~26%): Fila de reprodução e QR Code perfeitamente alinhados no fundo sólido.
+        - Separação exclusivamente por espaçamento generoso (whitespace).
       */}
       <div className="flex-1 w-full grid grid-cols-12 gap-8 lg:gap-14 min-h-0">
         {/* Coluna Central da Tela de Letras */}
         <section 
           className="col-span-12 lg:col-span-8 xl:col-span-9 h-full min-h-0 flex flex-col"
-          aria-label="Tela de letras em foco tipográfico"
+          aria-label="Painel tipográfico de letras"
         >
           <LyricsStage
             currentTrack={currentTrack}
@@ -237,7 +237,7 @@ export const StageView: React.FC = () => {
           />
         </section>
 
-        {/* Coluna da Fila e QR Code (Flutuando diretamente no fundo #1A1A2E) */}
+        {/* Coluna da Fila e QR Code (Flutuando diretamente no fundo sólido #1A1A2E) */}
         <section 
           className="col-span-12 lg:col-span-4 xl:col-span-3 h-full min-h-0"
           aria-label="Fila de espera e código de acesso"
@@ -250,8 +250,7 @@ export const StageView: React.FC = () => {
       </div>
 
       {/* 
-        3. Modal do Modo Produtor:
-        Editor prático de timestamps para sincronização ao vivo das letras.
+        3. Modal do Modo Produtor (Sincronizador de Timestamps ao Vivo)
       */}
       <ProducerModal
         isOpen={isProducerOpen}
