@@ -10,72 +10,75 @@ export const QueueSidebar: React.FC<QueueSidebarProps> = ({ queue, roomCode }) =
   return (
     <aside className="w-full h-full flex flex-col justify-between select-none">
       {/* 
-        1. Cabeçalho Minimalista da Fila:
-        Apenas texto refinado flutuando diretamente sobre o fundo sólido #1A1A2E.
+        1. CABEÇALHO E FILA DE REPRODUÇÃO ("A SEGUIR"):
+        - Flutuando diretamente sobre o fundo sólido #1A1A2E.
+        - Zero cards, zero bordas, zero blocos roxos chapados.
       */}
-      <div className="flex items-center justify-between pb-6 pt-2 shrink-0">
-        <h2 className="text-white/40 text-xs font-semibold uppercase tracking-[0.25em]">
-          A Seguir
-        </h2>
-        <span className="text-[11px] font-mono tracking-wider text-white/30">
-          {queue.length} {queue.length === 1 ? 'MÚSICA' : 'MÚSICAS'}
-        </span>
-      </div>
+      <div className="flex-1 flex flex-col min-h-0">
+        {/* Cabeçalho da Fila */}
+        <div className="flex items-center justify-between pb-6 pt-1 shrink-0">
+          <h2 className="text-white/40 text-xs font-semibold uppercase tracking-[0.25em]">
+            A Seguir
+          </h2>
+          <span className="text-[11px] font-mono tracking-wider text-white/30">
+            {queue.length} {queue.length === 1 ? 'MÚSICA' : 'MÚSICAS'}
+          </span>
+        </div>
 
-      {/* 
-        2. Lista da Fila ("A Seguir") - Impecavelmente Alinhada:
-        Espaçamento generoso, sem caixas ou bordas.
-      */}
-      <div className="flex-1 overflow-y-auto space-y-7 pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        {queue.length === 0 ? (
-          <div className="py-12 space-y-2 opacity-40">
-            <p className="text-white/60 text-xs font-normal">Fila vazia</p>
-            <p className="text-white/30 text-xs font-light">
-              Aponte a câmera para pedir a próxima música.
-            </p>
-          </div>
-        ) : (
-          queue.map((item, index) => (
-            <div
-              key={item.id}
-              className="flex items-start justify-between space-x-4"
-            >
-              {/* Posição Numérica Alinhada */}
-              <span className="text-xs font-mono text-white/20 tabular-nums w-5 pt-0.5 shrink-0">
-                {(index + 1).toString().padStart(2, '0')}
-              </span>
-
-              {/* Informações da Música e Toque Social Humanizado */}
-              <div className="flex-1 min-w-0">
-                <h3 className="text-white text-base font-normal tracking-tight truncate">
-                  {item.song.title}
-                </h3>
-                
-                <p className="text-white/40 text-xs font-light truncate mt-0.5">
-                  {item.song.artist}
-                </p>
-
-                <p className="text-white/40 text-xs font-light mt-1">
-                  Pedida por <span className="text-white/75 font-normal">{item.requestedBy}</span>
-                </p>
-              </div>
-
-              {/* Duração formatada */}
-              <span className="text-xs text-white/25 font-mono pt-0.5 shrink-0 tabular-nums">
-                {Math.floor(item.song.duration / 60)}:{(item.song.duration % 60).toString().padStart(2, '0')}
-              </span>
+        {/* Lista de Músicas na Fila com Espaçamento Inteligente */}
+        <div className="flex-1 overflow-y-auto space-y-6 pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+          {queue.length === 0 ? (
+            <div className="py-12 space-y-2 opacity-40">
+              <p className="text-white/60 text-xs font-normal">Fila vazia</p>
+              <p className="text-white/30 text-xs font-light">
+                Aponte a câmera do celular para pedir uma música.
+              </p>
             </div>
-          ))
-        )}
+          ) : (
+            queue.map((item, index) => (
+              <div
+                key={item.id}
+                className="flex items-start justify-between space-x-3.5"
+              >
+                {/* Posição Numérica */}
+                <span className="text-xs font-mono text-white/20 tabular-nums w-5 pt-0.5 shrink-0">
+                  {(index + 1).toString().padStart(2, '0')}
+                </span>
+
+                {/* Metadados da Faixa e Toque Social Humanizado */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-white text-sm font-normal tracking-tight truncate">
+                    {item.song.title}
+                  </h3>
+                  
+                  <p className="text-white/40 text-xs font-light truncate mt-0.5">
+                    {item.song.artist}
+                  </p>
+
+                  <p className="text-white/35 text-[11px] font-light mt-1">
+                    Pedida por <span className="text-white/70 font-normal">{item.requestedBy}</span>
+                  </p>
+                </div>
+
+                {/* Duração formatada em monospace discreto */}
+                <span className="text-xs text-white/25 font-mono pt-0.5 shrink-0 tabular-nums">
+                  {Math.floor(item.song.duration / 60)}:{(item.song.duration % 60).toString().padStart(2, '0')}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* 
-        3. Bloco do QR Code e Entrada na Sala:
-        Totalmente integrado à coluna, sem caixas delimitadoras pesadas.
+        2. BLOCO DO QR CODE (CENTRALIZADO NA PARTE INFERIOR):
+        - QR Code nítido centralizado em base branca.
+        - Textos centralizados logo abaixo.
+        - Sem caixas delimitadoras ou molduras pesadas.
       */}
-      <div className="pt-8 shrink-0 flex flex-col items-start space-y-3">
+      <div className="pt-8 pb-4 shrink-0 flex flex-col items-center text-center space-y-3">
         {/* QR Code Nítido em fundo branco arredondado para captura instantânea */}
-        <div className="w-24 h-24 bg-white p-2 rounded-xl shrink-0">
+        <div className="w-24 h-24 bg-white p-2 rounded-xl shadow-sm shrink-0">
           <svg
             className="w-full h-full"
             viewBox="0 0 100 100"
@@ -118,12 +121,12 @@ export const QueueSidebar: React.FC<QueueSidebarProps> = ({ queue, roomCode }) =
           </svg>
         </div>
 
-        {/* Tipografia de Orientação e Código */}
+        {/* Tipografia de Orientação Centralizada */}
         <div className="space-y-1">
-          <p className="text-white text-sm font-medium">
+          <p className="text-white text-xs font-medium">
             Peça sua música
           </p>
-          <p className="text-white/40 text-xs font-light">
+          <p className="text-white/40 text-[11px] font-light">
             Aponte a câmera do celular para entrar.
           </p>
           <p className="text-xs font-mono tracking-widest text-[#9575CD] font-medium pt-0.5">
