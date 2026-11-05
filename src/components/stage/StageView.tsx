@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { VideoPlayer } from './VideoPlayer';
 import { QueueSidebar } from './QueueSidebar';
 import { QueueItem, LyricLine } from '../../types/stage';
@@ -59,13 +59,13 @@ const SAMPLE_QUEUE: QueueItem[] = [
 // Letras Sincronizadas por Segundos (Estilo Cinema / LRC)
 const SAMPLE_LYRICS: LyricLine[] = [
   { id: '1', time: 0, text: '♪ Introdução Instrumental ♪' },
-  { id: '2', time: 10, text: 'Quando o dia amanhece e a luz começa a brilhar' },
-  { id: '3', time: 18, text: 'Sentimos no coração a paz que veio pra ficar' },
-  { id: '4', time: 26, text: 'Mesmo se a tempestade tentar nos assustar' },
-  { id: '5', time: 34, text: 'Com fé e esperança, nós vamos caminhar' },
-  { id: '6', time: 42, text: 'É uma alegria que não tem fim!' },
-  { id: '7', time: 50, text: 'Estar com quem a gente ama é bem assim...' },
-  { id: '8', time: 60, text: '♪ Solo Instrumental ♪' },
+  { id: '2', time: 8, text: 'Quando o dia amanhece e a luz começa a brilhar' },
+  { id: '3', time: 16, text: 'Sentimos no coração a paz que veio pra ficar' },
+  { id: '4', time: 24, text: 'Mesmo se a tempestade tentar nos assustar' },
+  { id: '5', time: 32, text: 'Com fé e esperança, nós vamos caminhar' },
+  { id: '6', time: 40, text: 'É uma alegria que não tem fim!' },
+  { id: '7', time: 48, text: 'Estar com quem a gente ama é bem assim...' },
+  { id: '8', time: 56, text: '♪ Solo Instrumental ♪' },
 ];
 
 export const StageView: React.FC = () => {
@@ -74,7 +74,7 @@ export const StageView: React.FC = () => {
   const roomCode = 'CANTE-77';
 
   // Avança a fila quando uma música é finalizada ou pulada
-  const handleNextTrack = () => {
+  const handleNextTrack = useCallback(() => {
     if (queue.length > 0) {
       const [nextSong, ...remainingQueue] = queue;
       setCurrentTrack({ ...nextSong, status: 'playing' });
@@ -82,48 +82,53 @@ export const StageView: React.FC = () => {
     } else {
       setCurrentTrack(null);
     }
-  };
+  }, [queue]);
+
+  // Suporte a atalhos rápidos de teclado (ideal para TVs e operadores de palco)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      if (e.key === 'ArrowRight' && e.shiftKey) {
+        handleNextTrack();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleNextTrack]);
 
   return (
-    <main className="relative w-screen h-screen bg-[#1A1A2E] text-white overflow-hidden p-6 lg:p-8 flex flex-col font-sans">
+    <main className="relative w-screen h-screen bg-[#1A1A2E] text-white overflow-hidden p-6 lg:p-8 xl:p-10 flex flex-col font-sans select-none">
       {/* 
-        Iluminação de Fundo: Vinheta óptica sutil cinematográfica (zero neon, zero gradiente arco-íris).
-        Gera profundidade de tela de cinema nas bordas da TV sem poluição visual.
+        1. Top Bar Editorial Ultraminimalista:
+        Marcação pura de tipografia e espaço, sem bordas ou poluição.
       */}
-      <div 
-        className="absolute inset-0 pointer-events-none -z-10"
-        style={{
-          background: 'radial-gradient(ellipse at center, #1E1A38 0%, #131222 100%)',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Top Header Discreto da Aplicação */}
-      <header className="flex items-center justify-between pb-4 select-none">
+      <header className="flex items-center justify-between pb-5 lg:pb-6 select-none shrink-0">
         <div className="flex items-center space-x-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#9575CD]" />
-          <h1 className="text-sm font-semibold tracking-widest text-white uppercase">
-            Cante <span className="text-[#9575CD] font-normal font-mono text-xs">/ Palco</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#9575CD]" />
+          <h1 className="text-xs font-semibold tracking-[0.3em] uppercase text-white/80">
+            Cante <span className="text-white/30 font-light tracking-[0.2em]">/ PALCO</span>
           </h1>
         </div>
 
-        <div className="flex items-center space-x-2 text-xs text-white/40">
-          <span>Sessão Ativa</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+        <div className="flex items-center space-x-2 text-[11px] font-mono text-white/30 tracking-wider">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
+          <span>SESSÃO ATIVA</span>
         </div>
       </header>
 
       {/* 
-        Layout Assimétrico de 2 Colunas para TV (16:9 Cinema View):
-        - Esquerda (~75%): Player com legendas de cinema e controles discretos.
-        - Direita (~25%): Painel minimalista de fila "Up Next" com QR Code de entrada.
+        2. Layout Principal de 2 Colunas (Cinema View):
+        - Esquerda (~74%): Player de vídeo cinematográfico com overlay imersivo de legendas.
+        - Direita (~26%): Painel de vidro fosco sutil com fila 'Up Next' e QR Code.
+        - Separação feita exclusivamente por espaçamento generoso (gap-8/gap-10) sem bordas neon.
       */}
-      <div className="flex-1 w-full grid grid-cols-12 gap-6 min-h-0">
-        
-        {/* Coluna Esquerda: Player de Vídeo e Letras (~75%) */}
+      <div className="flex-1 w-full grid grid-cols-12 gap-6 lg:gap-8 min-h-0">
+        {/* Coluna do Player e Legenda Imersiva */}
         <section 
-          className="col-span-12 lg:col-span-9 h-full min-h-0 flex flex-col"
-          aria-label="Área de reprodução de vídeo e letras"
+          className="col-span-12 lg:col-span-8 xl:col-span-9 h-full min-h-0 flex flex-col"
+          aria-label="Palco de reprodução e legendas"
         >
           <VideoPlayer
             currentTrack={currentTrack}
@@ -133,17 +138,16 @@ export const StageView: React.FC = () => {
           />
         </section>
 
-        {/* Coluna Direita: Fila de Reprodução e QR Code (~25%) */}
+        {/* Coluna Lateral da Fila e QR Code */}
         <section 
-          className="col-span-12 lg:col-span-3 h-full min-h-0"
-          aria-label="Fila de espera e código de acesso à sala"
+          className="col-span-12 lg:col-span-4 xl:col-span-3 h-full min-h-0"
+          aria-label="Fila de espera e código de acesso"
         >
           <QueueSidebar
             queue={queue}
             roomCode={roomCode}
           />
         </section>
-
       </div>
     </main>
   );

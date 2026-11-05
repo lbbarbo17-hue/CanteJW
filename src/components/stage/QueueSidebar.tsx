@@ -8,64 +8,67 @@ interface QueueSidebarProps {
 
 export const QueueSidebar: React.FC<QueueSidebarProps> = ({ queue, roomCode }) => {
   return (
-    <aside className="w-full h-full flex flex-col justify-between bg-[#4A148C]/15 backdrop-blur-md rounded-2xl border border-white/[0.06] p-5 shadow-2xl overflow-hidden select-none">
-      {/* 1. Cabeçalho Minimalista da Fila */}
-      <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+    <aside className="w-full h-full flex flex-col justify-between bg-white/[0.015] backdrop-blur-2xl rounded-3xl p-6 lg:p-8 select-none border border-white/[0.03]">
+      {/* 
+        1. Cabeçalho Minimalista da Fila:
+        Separação puramente por espaçamento e tipografia sutil.
+      */}
+      <div className="flex items-center justify-between pb-6 border-b border-white/[0.03]">
         <div className="flex items-center space-x-2">
           <span className="w-1.5 h-1.5 rounded-full bg-[#9575CD]" />
-          <h2 className="text-white text-xs font-semibold uppercase tracking-widest">
+          <h2 className="text-white/50 text-xs font-medium uppercase tracking-[0.25em]">
             A Seguir
           </h2>
         </div>
-        <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#9575CD]/15 text-[#9575CD] border border-[#9575CD]/20">
-          {queue.length} {queue.length === 1 ? 'música' : 'músicas'}
+        <span className="text-[11px] font-mono tracking-wider text-white/25">
+          {queue.length} {queue.length === 1 ? 'MÚSICA' : 'MÚSICAS'}
         </span>
       </div>
 
-      {/* 2. Lista de Músicas na Fila ("Up Next") */}
-      <div className="flex-1 overflow-y-auto py-3 space-y-2.5 my-2 pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      {/* 
+        2. Lista da Fila ("Up Next") - Zero Card Hell:
+        Sem blocos roxos, sem caixinhas fatiadas. Tipografia editorial fluida e arejada.
+      */}
+      <div className="flex-1 overflow-y-auto py-5 space-y-6 pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         {queue.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-2 opacity-50">
-            <svg className="w-8 h-8 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-            </svg>
-            <p className="text-white/60 text-xs font-medium">Fila vazia</p>
-            <p className="text-white/40 text-[11px] leading-relaxed">
-              Use o QR Code abaixo para escolher o próximo clipe.
+          <div className="h-full flex flex-col items-center justify-center text-center py-12 space-y-2 opacity-40">
+            <p className="text-white/60 text-xs font-normal">Nenhuma música na fila</p>
+            <p className="text-white/30 text-[11px] font-light">
+              Escaneie o código abaixo para adicionar a sua.
             </p>
           </div>
         ) : (
           queue.map((item, index) => (
             <div
               key={item.id}
-              className="group p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] transition-all duration-200 flex items-start space-x-3"
+              className="group flex items-start space-x-3.5 transition-colors"
             >
-              {/* Indicador Numérico de Posição */}
-              <span className="text-white/30 font-mono text-xs font-medium pt-0.5 w-4 text-center tabular-nums">
+              {/* Posição Numérica */}
+              <span className="text-white/20 font-mono text-xs font-normal pt-0.5 w-4 tabular-nums">
                 {(index + 1).toString().padStart(2, '0')}
               </span>
 
-              {/* Informações da Faixa */}
+              {/* Informações da Música e Toque Social Humanizado */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-white text-sm font-medium leading-snug truncate group-hover:text-white transition-colors">
+                <h3 className="text-white/90 text-sm font-normal tracking-tight truncate group-hover:text-white transition-colors">
                   {item.song.title}
                 </h3>
                 
-                <p className="text-white/40 text-xs truncate mt-0.5 font-light">
+                <p className="text-white/40 text-xs font-light truncate mt-0.5">
                   {item.song.artist}
                 </p>
 
-                {/* Toque Social: Autor do Pedido */}
-                <div className="mt-1.5 flex items-center space-x-1.5">
-                  <span className="w-1 h-1 rounded-full bg-[#9575CD]/60" />
-                  <span className="text-xs text-white/60">
-                    Pedida por <span className="text-[#9575CD] font-medium">{item.requestedBy}</span>
+                {/* Toque Social Humanizado: "Pedida por [Nome]" */}
+                <div className="mt-1 flex items-center space-x-1.5">
+                  <span className="w-1 h-1 rounded-full bg-[#9575CD]/40" />
+                  <span className="text-[11px] font-light text-white/35">
+                    Pedida por <span className="text-white/70 font-normal">{item.requestedBy}</span>
                   </span>
                 </div>
               </div>
 
-              {/* Duração formatada da música */}
-              <span className="text-[11px] text-white/30 font-mono pt-0.5">
+              {/* Duração em Monospace Sutil */}
+              <span className="text-[11px] text-white/25 font-mono pt-0.5 tabular-nums">
                 {Math.floor(item.song.duration / 60)}:{(item.song.duration % 60).toString().padStart(2, '0')}
               </span>
             </div>
@@ -73,15 +76,16 @@ export const QueueSidebar: React.FC<QueueSidebarProps> = ({ queue, roomCode }) =
         )}
       </div>
 
-      {/* 3. Bloco do QR Code e Entrada na Sala (Sem firulas ou excessos) */}
-      <div className="pt-3 border-t border-white/[0.06]">
-        <div className="bg-[#131222]/80 border border-white/[0.08] p-4 rounded-xl flex flex-col items-center text-center space-y-3">
-          
-          {/* QR Code Container de Alto Contraste (Otimizado para leitura rápida de câmera de celular à distância) */}
-          <div className="p-2 bg-white rounded-lg shadow-md border border-white/20">
-            {/* SVG Vetorial de QR Code nítido representando 'cante.app/sala/[roomCode]' */}
+      {/* 
+        3. Bloco do QR Code e Entrada na Sala:
+        Design sóbrio, integrado com o painel fosco. Alto contraste no QR Code para leitura rápida de longe.
+      */}
+      <div className="pt-6 border-t border-white/[0.03]">
+        <div className="flex items-center space-x-5">
+          {/* QR Code Nítido em fundo branco arredondado para captura instantânea */}
+          <div className="p-2.5 bg-white rounded-2xl shadow-xl shrink-0">
             <svg
-              className="w-24 h-24"
+              className="w-20 h-20"
               viewBox="0 0 100 100"
               fill="black"
               aria-label={`QR Code para entrar na sala ${roomCode}`}
@@ -101,7 +105,7 @@ export const QueueSidebar: React.FC<QueueSidebarProps> = ({ queue, roomCode }) =
               <rect x="14" y="66" width="20" height="20" fill="white" />
               <rect x="18" y="70" width="12" height="12" fill="black" />
 
-              {/* Padrões de Dados Central e Bordas */}
+              {/* Padrão de Dados do QR Code */}
               <rect x="44" y="10" width="6" height="6" />
               <rect x="52" y="16" width="6" height="6" />
               <rect x="44" y="24" width="6" height="6" />
@@ -122,14 +126,19 @@ export const QueueSidebar: React.FC<QueueSidebarProps> = ({ queue, roomCode }) =
             </svg>
           </div>
 
-          {/* Instrução Humanizada e Código da Sala */}
-          <div className="space-y-1">
-            <p className="text-white text-xs font-normal tracking-wide">
-              Aponte a câmera do celular para entrar na sala
+          {/* Instruções Humanizadas e Código da Sala */}
+          <div className="space-y-1.5 min-w-0">
+            <h4 className="text-white/90 text-xs font-medium tracking-tight">
+              Peça sua música
+            </h4>
+            <p className="text-white/40 text-[11px] font-light leading-relaxed">
+              Aponte a câmera do celular para entrar na sessão.
             </p>
-            <div className="inline-flex items-center space-x-1.5 pt-0.5">
-              <span className="text-white/40 text-[11px] uppercase tracking-wider">Código:</span>
-              <span className="text-[#9575CD] font-mono font-semibold text-xs tracking-widest">
+            <div className="pt-1 flex items-baseline space-x-1.5">
+              <span className="text-white/30 text-[10px] font-mono tracking-widest uppercase">
+                Código:
+              </span>
+              <span className="text-[#9575CD] font-mono font-medium text-xs tracking-widest">
                 {roomCode}
               </span>
             </div>
