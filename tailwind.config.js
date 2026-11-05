@@ -8,10 +8,9 @@ export default {
     extend: {
       colors: {
         cante: {
-          bg: '#1A1A2E',       // Deep Royal Purple (Fundo)
-          panel: '#4A148C',    // Royal Purple (Cards / Painéis)
-          lavender: '#9575CD', // Soft Lavender (Legendas ativas e realces)
-          white: '#FFFFFF',    // Textos e ícones primários
+          bg: '#1A1A2E',       // Deep Royal Purple (Fundo Sólido)
+          lavender: '#9575CD', // Soft Lavender (Legenda Ativa e Realces)
+          white: '#FFFFFF',    // Textos
         },
       },
       fontFamily: {

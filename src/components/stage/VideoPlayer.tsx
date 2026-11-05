@@ -32,7 +32,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Simulação precisa do tempo de reprodução
+  // Simulação do tempo de reprodução
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isPlaying && currentTrack) {
@@ -58,7 +58,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   }, [currentTrack]);
 
-  // Auto-hide suave dos controles após 2.5s de inatividade
+  // Auto-hide suave dos controles após 2.5s
   const handleMouseMove = useCallback(() => {
     setIsControlsVisible(true);
     if (hideTimeoutRef.current) {
@@ -83,9 +83,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement && containerRef.current) {
-      containerRef.current.requestFullscreen().catch(() => { });
+      containerRef.current.requestFullscreen().catch(() => {});
     } else if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => { });
+      document.exitFullscreen().catch(() => {});
     }
   };
 
@@ -96,81 +96,68 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setIsControlsVisible(false)}
-      className="relative w-full h-full bg-[#121124] rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between group select-none transition-all"
+      className="relative w-full h-full bg-black rounded-2xl overflow-hidden flex flex-col justify-between group select-none shadow-2xl"
     >
       {/* 
-        1. Fundo do Palco Cinematográfico:
-        Visual atmosférico ultra-sutil que dá vida à TV sem saturação, ruídos ou neon.
+        1. Canvas Cinematográfico de Vídeo:
+        Superfície limpa e contínua, sem padrões pontilhados, sem bordas falsas.
       */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {/* Luz ambiente orgânica e lenta */}
-        <div
-          className={`absolute -top-1/4 -left-1/4 w-[150%] h-[150%] opacity-30 transition-opacity duration-1000 ${isPlaying ? 'opacity-30' : 'opacity-15'
-            }`}
+      <div className="absolute inset-0 z-0 bg-[#0c0b14] flex items-center justify-center pointer-events-none">
+        {/* Luz de palco atmosférica contínua e suave */}
+        <div 
+          className="absolute inset-0 opacity-20 pointer-events-none"
           style={{
-            background: 'radial-gradient(circle at 40% 45%, #2a2046 0%, #161427 45%, #0e0d18 80%)',
-          }}
-        />
-
-        {/* Linhas de luz tênues / grade anamórfica de cinema */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.4) 1px, transparent 0)',
-            backgroundSize: '48px 48px',
+            background: 'radial-gradient(circle at 50% 50%, #201a35 0%, transparent 70%)',
           }}
         />
       </div>
 
       {/* 
-        2. Top Bar Discreta e Elegante:
-        Metadados integrados diretamente no topo com tipografia nobre (sem cartões ou pílulas pesadas).
+        2. Top Bar Discreta:
+        Texto limpo e legível sobre o vídeo, sem caixas ou pílulas.
       */}
-      <div
-        className={`relative z-20 flex items-start justify-between p-8 lg:p-10 transition-opacity duration-500 ${isControlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0'
-          }`}
+      <div 
+        className={`relative z-20 flex items-start justify-between p-8 transition-opacity duration-300 ${
+          isControlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0'
+        }`}
       >
-        <div className="space-y-1">
-          <div className="flex items-center space-x-2.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#9575CD] animate-pulse" />
-            <span className="text-[11px] font-medium tracking-[0.2em] text-white/40 uppercase">
-              Tocando Agora
-            </span>
-          </div>
-          <h2 className="text-xl lg:text-2xl font-medium tracking-tight text-white/95">
-            {currentTrack?.song.title || 'Palco Cante Pronto'}
+        <div className="space-y-0.5">
+          <p className="text-[11px] font-mono tracking-widest text-[#9575CD] uppercase">
+            Tocando Agora
+          </p>
+          <h2 className="text-xl lg:text-2xl font-medium tracking-tight text-white drop-shadow-md">
+            {currentTrack?.song.title || 'Palco Cante'}
           </h2>
-          <p className="text-xs lg:text-sm font-light text-white/40">
+          <p className="text-xs lg:text-sm font-light text-white/50 drop-shadow-sm">
             {currentTrack?.song.artist}
           </p>
         </div>
 
         {currentTrack && (
-          <div className="text-right pt-1">
-            <p className="text-xs lg:text-sm font-light text-white/40">
-              Pedida por <span className="text-white/80 font-normal">{currentTrack.requestedBy}</span>
-            </p>
-          </div>
+          <p className="text-xs lg:text-sm font-light text-white/50 pt-1 drop-shadow-sm">
+            Pedida por <span className="text-white font-normal">{currentTrack.requestedBy}</span>
+          </p>
         )}
       </div>
 
       {/* 
-        3. Área de Legendas Sobreposta em Modo Imersivo:
-        Zero caixas isoladas. Comportamento idêntico a legendas de cinema de alto padrão.
+        3. Legendas de Cinema Sobrepostas ao Vídeo:
+        Posicionadas em absolute overlay exatamente no terço inferior interno do vídeo.
       */}
       <LyricsSubtitle lyrics={lyrics} currentTime={currentTime} />
 
       {/* 
         4. Barra de Controles Inferior Ultraminimalista:
-        Aparece apenas quando o usuário interage ou quando o vídeo é pausado.
+        Aparece de forma translúcida apenas sob interação.
       */}
       <div
-        className={`relative z-20 px-8 lg:px-10 pb-8 pt-16 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-opacity duration-500 ${isControlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0 pointer-events-none'
-          }`}
+        className={`relative z-20 px-8 pb-8 pt-12 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-300 ${
+          isControlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
       >
-        {/* Scrubber de Linha Fina (2px) sem molduras pesadas */}
-        <div className="relative mb-5 group/scrubber cursor-pointer">
-          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden transition-all duration-200 group-hover/scrubber:h-1.5">
+        {/* Scrubber de Linha Fina */}
+        <div className="relative mb-4 group/scrubber cursor-pointer">
+          <div className="w-full h-1 bg-white/15 rounded-full overflow-hidden">
             <div
               className="h-full bg-[#9575CD] rounded-full transition-all duration-150"
               style={{ width: `${progressPercent}%` }}
@@ -183,53 +170,50 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             value={currentTime}
             onChange={handleSeek}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            aria-label="Controle de posição da música"
+            aria-label="Controle de posição"
           />
         </div>
 
-        {/* Linha de Ações e Tempo */}
+        {/* Linha de Controles */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-5">
-            {/* Play / Pause */}
+          <div className="flex items-center space-x-4">
             <button
               onClick={togglePlay}
-              className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/15 active:scale-95 text-white/90 hover:text-white flex items-center justify-center transition-all"
+              className="text-white hover:text-[#9575CD] transition-colors p-1"
               title={isPlaying ? 'Pausar (Espaço)' : 'Reproduzir (Espaço)'}
             >
               {isPlaying ? (
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                 </svg>
               ) : (
-                <svg className="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               )}
             </button>
 
-            {/* Pular Faixa */}
             <button
               onClick={onSkipTrack}
-              className="w-9 h-9 rounded-full bg-transparent hover:bg-white/10 active:scale-95 text-white/50 hover:text-white flex items-center justify-center transition-all"
-              title="Pular para a próxima música"
+              className="text-white/60 hover:text-white transition-colors p-1"
+              title="Pular faixa"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                 <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
               </svg>
             </button>
 
-            {/* Marcador de Tempo Discreto */}
-            <span className="text-white/40 text-xs font-mono tracking-wider tabular-nums">
+            <span className="text-white/40 text-xs font-mono tracking-wider tabular-nums pl-1">
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>
 
-          <div className="flex items-center space-x-6">
-            {/* Controle de Volume */}
-            <div className="flex items-center space-x-2.5">
+          <div className="flex items-center space-x-5">
+            {/* Volume */}
+            <div className="flex items-center space-x-2">
               <button
                 onClick={() => setIsMuted((prev) => !prev)}
-                className="text-white/40 hover:text-white/80 transition-colors"
+                className="text-white/50 hover:text-white transition-colors"
                 title={isMuted ? 'Desativar Mudo' : 'Silenciar'}
               >
                 {isMuted || volume === 0 ? (
@@ -252,15 +236,15 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   setVolume(Number(e.target.value));
                   setIsMuted(false);
                 }}
-                className="w-16 h-1 bg-white/10 rounded-full accent-[#9575CD] cursor-pointer"
+                className="w-16 h-1 bg-white/20 rounded-full accent-[#9575CD] cursor-pointer"
                 aria-label="Volume"
               />
             </div>
 
-            {/* Botão de Tela Cheia */}
+            {/* Tela cheia */}
             <button
               onClick={toggleFullscreen}
-              className="text-white/40 hover:text-white/80 transition-colors"
+              className="text-white/50 hover:text-white transition-colors"
               title="Tela Cheia (F)"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">

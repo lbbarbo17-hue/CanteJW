@@ -84,7 +84,7 @@ export const StageView: React.FC = () => {
     }
   }, [queue]);
 
-  // Suporte a atalhos rápidos de teclado (ideal para TVs e operadores de palco)
+  // Suporte a atalhos de teclado (Shift + ArrowRight para pular)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
@@ -99,33 +99,33 @@ export const StageView: React.FC = () => {
   }, [handleNextTrack]);
 
   return (
-    <main className="relative w-screen h-screen bg-[#1A1A2E] text-white overflow-hidden p-6 lg:p-8 xl:p-10 flex flex-col font-sans select-none">
+    <main className="w-screen h-screen bg-[#1A1A2E] text-white overflow-hidden p-8 lg:p-10 flex flex-col font-sans select-none">
       {/* 
-        1. Top Bar Editorial Ultraminimalista:
-        Marcação pura de tipografia e espaço, sem bordas ou poluição.
+        1. Top Bar Editorial:
+        Apenas tipografia pura e respiração visual sobre o fundo sólido #1A1A2E.
       */}
-      <header className="flex items-center justify-between pb-5 lg:pb-6 select-none shrink-0">
+      <header className="flex items-center justify-between pb-6 select-none shrink-0">
         <div className="flex items-center space-x-3">
           <span className="w-1.5 h-1.5 rounded-full bg-[#9575CD]" />
-          <h1 className="text-xs font-semibold tracking-[0.3em] uppercase text-white/80">
+          <h1 className="text-xs font-semibold tracking-[0.25em] uppercase text-white/80">
             Cante <span className="text-white/30 font-light tracking-[0.2em]">/ PALCO</span>
           </h1>
         </div>
 
         <div className="flex items-center space-x-2 text-[11px] font-mono text-white/30 tracking-wider">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
           <span>SESSÃO ATIVA</span>
         </div>
       </header>
 
       {/* 
-        2. Layout Principal de 2 Colunas (Cinema View):
-        - Esquerda (~74%): Player de vídeo cinematográfico com overlay imersivo de legendas.
-        - Direita (~26%): Painel de vidro fosco sutil com fila 'Up Next' e QR Code.
-        - Separação feita exclusivamente por espaçamento generoso (gap-8/gap-10) sem bordas neon.
+        2. Layout Principal de 2 Colunas:
+        - Esquerda (~74%): Player de vídeo cinematográfico com legendas sobrepostas.
+        - Direita (~26%): Lista da fila e QR Code flutuando diretamente no fundo escuro.
+        - Separação feita exclusivamente por espaçamento em branco (whitespace).
       */}
-      <div className="flex-1 w-full grid grid-cols-12 gap-6 lg:gap-8 min-h-0">
-        {/* Coluna do Player e Legenda Imersiva */}
+      <div className="flex-1 w-full grid grid-cols-12 gap-8 lg:gap-12 min-h-0">
+        {/* Coluna do Player e Legendas de Cinema */}
         <section 
           className="col-span-12 lg:col-span-8 xl:col-span-9 h-full min-h-0 flex flex-col"
           aria-label="Palco de reprodução e legendas"
@@ -138,7 +138,7 @@ export const StageView: React.FC = () => {
           />
         </section>
 
-        {/* Coluna Lateral da Fila e QR Code */}
+        {/* Coluna da Fila e QR Code (Flutuando diretamente no fundo #1A1A2E) */}
         <section 
           className="col-span-12 lg:col-span-4 xl:col-span-3 h-full min-h-0"
           aria-label="Fila de espera e código de acesso"

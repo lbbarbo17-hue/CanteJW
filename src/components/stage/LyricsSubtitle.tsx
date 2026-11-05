@@ -7,7 +7,7 @@ interface LyricsSubtitleProps {
 }
 
 export const LyricsSubtitle: React.FC<LyricsSubtitleProps> = ({ lyrics, currentTime }) => {
-  // Identifica a linha ativa atual através da timestamp
+  // Identifica a linha ativa atual através do timestamp
   const activeIndex = lyrics.reduce((currIdx, line, idx) => {
     return currentTime >= line.time ? idx : currIdx;
   }, 0);
@@ -17,46 +17,46 @@ export const LyricsSubtitle: React.FC<LyricsSubtitleProps> = ({ lyrics, currentT
   const nextLine = activeIndex < lyrics.length - 1 ? lyrics[activeIndex + 1] : null;
 
   return (
-    <div className="absolute inset-x-0 bottom-0 pointer-events-none z-10 flex flex-col items-center justify-end pb-8 lg:pb-12 px-6 sm:px-12 select-none">
+    <div className="absolute inset-x-0 bottom-8 lg:bottom-12 z-20 pointer-events-none flex flex-col items-center justify-end px-8 select-none">
       {/* 
-        Gradiente translúcido cinematográfico ultrafino.
-        Garante legibilidade absoluta em qualquer quadro claro ou escuro sem criar blocos/caixas na tela.
+        Faixa preta translúcida imperceptível que garante leitura cinematográfica 
+        em qualquer cena sem criar caixas ou quebrar a tela.
       */}
       <div 
-        className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#1A1A2E]/95 via-[#1A1A2E]/40 to-transparent pointer-events-none -z-10" 
+        className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none -z-10" 
         aria-hidden="true" 
       />
 
-      <div className="flex flex-col items-center text-center max-w-4xl w-full">
-        {/* Linha Anterior (Contexto sutil - transição suave) */}
-        <div className="h-7 lg:h-8 flex items-center justify-center">
+      <div className="flex flex-col items-center text-center max-w-4xl w-full space-y-2">
+        {/* Linha anterior: branco com 40% de opacidade */}
+        <div className="h-7 flex items-center justify-center">
           {prevLine ? (
-            <p className="text-white/25 text-sm lg:text-base font-light tracking-wide transition-opacity duration-700">
+            <p className="text-white/40 text-base lg:text-lg font-normal tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-opacity duration-500">
               {prevLine.text}
             </p>
           ) : null}
         </div>
 
-        {/* Linha Ativa (Legenda de Cinema em Soft Lavender #9575CD com tipografia limpa e peso refinado) */}
-        <div className="min-h-[3.5rem] lg:min-h-[4.5rem] flex items-center justify-center my-1.5 lg:my-2">
+        {/* Linha ativa: tipografia limpa em Soft Lavender (#9575CD) com leve sombra de texto */}
+        <div className="min-h-[3.5rem] lg:min-h-[4.5rem] flex items-center justify-center">
           {currentLine ? (
             <p 
               key={currentLine.id}
-              className="text-[#9575CD] text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-medium tracking-tight leading-tight drop-shadow-[0_2px_20px_rgba(0,0,0,0.85)] animate-fadeIn"
+              className="text-[#9575CD] text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-fadeIn"
             >
               {currentLine.text}
             </p>
           ) : (
-            <p className="text-white/40 text-lg lg:text-xl font-light tracking-wide">
-              Aguardando introdução...
+            <p className="text-white/40 text-xl font-light drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              ♪ Aguardando música...
             </p>
           )}
         </div>
 
-        {/* Próxima Linha (Antecipação para o cantor, elegante e sem ruído visual) */}
-        <div className="h-7 lg:h-8 flex items-center justify-center">
+        {/* Próxima linha para antecipação sutil do cantor */}
+        <div className="h-7 flex items-center justify-center">
           {nextLine ? (
-            <p className="text-white/40 text-sm lg:text-base font-light tracking-wide transition-opacity duration-700">
+            <p className="text-white/40 text-base lg:text-lg font-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] transition-opacity duration-500">
               {nextLine.text}
             </p>
           ) : null}
