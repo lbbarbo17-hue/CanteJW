@@ -16,7 +16,6 @@ interface LyricsStageProps {
   onToggleMute: () => void;
   onChangeVolume: (volume: number) => void;
   onToggleFullscreen: () => void;
-  onOpenProducer: () => void;
   onMouseMove: () => void;
 }
 
@@ -35,7 +34,6 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
   onToggleMute,
   onChangeVolume,
   onToggleFullscreen,
-  onOpenProducer,
   onMouseMove,
 }) => {
   // Identifica o índice da linha ativa atual
@@ -63,109 +61,77 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
       className="relative w-full h-full flex flex-col justify-between select-none"
     >
       {/* 
-        1. CABEÇALHO ELEGANTE DE ALTA-COSTURA (ZERO PLAYER DE VÍDEO):
-        - Topo Esquerdo: Título da música em destaque tipográfico absoluto em Branco #FFFFFF.
-        - Abaixo: Artista / Gênero de forma sutil e discreta.
-        - Acima: Selo sutil "TOCANDO AGORA".
-        - Topo Direito: Apelido de quem pediu a faixa.
+        1. PAINEL CENTRAL DE LETRAS (FLUXO TELEPROMPTER / MODO MÚSICA):
+        - Palco tipográfico puro com foco e respiro vertical absoluto.
+        - Exibe estritamente 3 linhas verticais organizadas por espaçamento generoso:
+          1. Linha anterior: sutil, menor e opaca.
+          2. Linha atual ativa: centralizada, em destaque com Soft Lavender (#9575CD).
+          3. Próxima linha: abaixo, com opacidade suave.
+        - Zero caixas, zero bordas, zero fundos coloridos. Tipografia pura flutuando em #1A1A2E.
       */}
-      <div className="flex items-start justify-between shrink-0 pt-2 pb-6">
-        <div className="space-y-1.5 max-w-2xl">
-          {/* Selo sutil "tocando agora" */}
-          <div className="flex items-center space-x-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#9575CD] animate-pulse" />
-            <span className="text-[11px] font-mono tracking-[0.25em] text-[#9575CD] uppercase font-medium">
-              Tocando Agora
-            </span>
-          </div>
-
-          {/* Título da Música em destaque tipográfico absoluto em Branco #FFFFFF */}
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-white leading-tight">
-            {currentTrack?.song.title || 'Selecione uma canção'}
-          </h2>
-
-          {/* Artista e Gênero discreto */}
-          <p className="text-sm lg:text-base font-light text-white/40 tracking-wide">
-            {currentTrack?.song.artist}
-          </p>
-        </div>
-
-        {/* Quem pediu a faixa */}
-        {currentTrack && (
-          <div className="text-right pt-2 shrink-0">
-            <p className="text-xs lg:text-sm font-light text-white/40">
-              Pedida por <span className="text-white font-normal">{currentTrack.requestedBy}</span>
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* 
-        2. PAINEL CENTRAL DE LETRAS (FLUXO TELEPROMPTER DE 3 LINHAS):
-        Apenas 3 linhas por vez:
-        - Linha anterior: menor, opaca, sutil.
-        - Linha atual: grande, centralizada, em Soft Lavender (#9575CD).
-        - Próxima linha: abaixo, com opacidade suave.
-        Zero caixas, zero bordas, zero fundos coloridos. Tipografia pura.
-      */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center px-4 py-8">
-        <div className="max-w-4xl w-full flex flex-col items-center justify-center space-y-6 lg:space-y-8">
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
+        <div className="max-w-4xl w-full flex flex-col items-center justify-center space-y-8 lg:space-y-12">
           
-          {/* Linha Anterior (Menor e Opaca) */}
-          <div className="h-10 lg:h-12 flex items-center justify-center">
+          {/* Linha Anterior (Sutil e Opaca) */}
+          <div className="h-10 lg:h-14 flex items-center justify-center">
             {prevLine ? (
               <p 
                 onClick={() => onSeek(prevLine.time)}
-                className="text-white/30 text-lg sm:text-xl lg:text-2xl font-light tracking-wide cursor-pointer hover:text-white/50 transition-all duration-500"
+                className="text-white/25 text-xl sm:text-2xl lg:text-3xl font-light tracking-wide cursor-pointer hover:text-white/45 transition-all duration-700"
               >
                 {prevLine.text}
               </p>
-            ) : null}
+            ) : (
+              <div className="h-6" aria-hidden="true" />
+            )}
           </div>
 
-          {/* Linha Atual Ativa (Grande, Centralizada, em Soft Lavender #9575CD) */}
-          <div className="min-h-[4rem] sm:min-h-[5rem] lg:min-h-[6rem] flex items-center justify-center">
+          {/* Linha Atual Ativa (Em Destaque Absoluto - Soft Lavender #9575CD) */}
+          <div className="min-h-[5rem] sm:min-h-[6rem] lg:min-h-[7rem] flex items-center justify-center px-2">
             {currentLine ? (
               <p 
                 key={currentLine.id}
-                className="text-[#9575CD] text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-medium tracking-tight leading-tight transition-all duration-500 animate-fadeIn"
+                className="text-[#9575CD] text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-normal tracking-tight leading-tight transition-all duration-500 animate-fadeIn"
               >
                 {currentLine.text}
               </p>
             ) : (
-              <p className="text-white/30 text-2xl font-light">
-                ♪ Aguardando música...
+              <p className="text-white/20 text-2xl font-light">
+                ♪ Aguardando introdução...
               </p>
             )}
           </div>
 
-          {/* Próxima Linha (Abaixo, com Opacidade Suave) */}
-          <div className="h-10 lg:h-12 flex items-center justify-center">
+          {/* Próxima Linha (Logo Abaixo com Opacidade Suave) */}
+          <div className="h-10 lg:h-14 flex items-center justify-center">
             {nextLine ? (
               <p 
                 onClick={() => onSeek(nextLine.time)}
-                className="text-white/40 text-lg sm:text-xl lg:text-2xl font-light tracking-wide cursor-pointer hover:text-white/60 transition-all duration-500"
+                className="text-white/35 text-xl sm:text-2xl lg:text-3xl font-light tracking-wide cursor-pointer hover:text-white/55 transition-all duration-700"
               >
                 {nextLine.text}
               </p>
-            ) : null}
+            ) : (
+              <div className="h-6" aria-hidden="true" />
+            )}
           </div>
 
         </div>
       </div>
 
       {/* 
-        3. BARRA INFERIOR DE CONTROLES E PROGRESSO DISCRETA:
-        Totalmente integrada ao fundo, sem caixas pesadas.
+        2. BARRA DE CONTROLE INFERIOR FLUTUANTE:
+        - Afastada das bordas da tela com padding generoso (pb-4 pt-4 px-2).
+        - Ícones minimalistas e linha de progresso ultrafina em Soft Lavender (#9575CD).
       */}
       <div 
         className={`pt-6 pb-2 transition-opacity duration-300 shrink-0 ${
-          isControlsVisible || !isPlaying ? 'opacity-100' : 'opacity-25 hover:opacity-100'
+          isControlsVisible || !isPlaying ? 'opacity-100' : 'opacity-20 hover:opacity-100'
         }`}
       >
-        {/* Scrubber de Linha Fina (1px / 2px) */}
-        <div className="relative mb-4 group/scrubber cursor-pointer">
-          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden transition-all group-hover/scrubber:h-1.5">
+        {/* Linha de Progresso Ultrafina (1px / 2px) */}
+        <div className="relative mb-5 group/scrubber cursor-pointer">
+          <div className="w-full h-0.5 bg-white/10 rounded-full overflow-hidden transition-all group-hover/scrubber:h-1">
             <div
               className="h-full bg-[#9575CD] rounded-full transition-all duration-150"
               style={{ width: `${progressPercent}%` }}
@@ -178,32 +144,34 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
             value={currentTime}
             onChange={(e) => onSeek(Number(e.target.value))}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            aria-label="Controle de posição"
+            aria-label="Controle de posição da música"
           />
         </div>
 
-        {/* Linha de Ações: Play, Skip, Tempo, Modo Produtor e Volume */}
+        {/* Linha de Ações Minimalistas */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-5">
+            {/* Play / Pause */}
             <button
               onClick={onTogglePlay}
-              className="text-white hover:text-[#9575CD] transition-colors p-1"
+              className="text-white/80 hover:text-white transition-colors p-1"
               title={isPlaying ? 'Pausar (Espaço)' : 'Reproduzir (Espaço)'}
             >
               {isPlaying ? (
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                   <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                 </svg>
               ) : (
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               )}
             </button>
 
+            {/* Pular Faixa */}
             <button
               onClick={onSkipTrack}
-              className="text-white/40 hover:text-white transition-colors p-1"
+              className="text-white/35 hover:text-white transition-colors p-1"
               title="Pular para a próxima música"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -211,27 +179,18 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
               </svg>
             </button>
 
-            <span className="text-white/35 text-xs font-mono tracking-wider tabular-nums pl-1">
+            {/* Marcador de Tempo Discreto */}
+            <span className="text-white/30 text-xs font-mono tracking-wider tabular-nums pl-1">
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>
 
-          <div className="flex items-center space-x-5">
-            {/* Atalho para o Modo Produtor */}
-            <button
-              onClick={onOpenProducer}
-              className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-colors text-xs font-mono tracking-wider"
-              title="Abrir sincronizador de timestamps (Atalho: P)"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#9575CD]" />
-              <span>Modo Produtor</span>
-            </button>
-
-            {/* Controle de Volume */}
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-6">
+            {/* Controle de Volume Minimalista */}
+            <div className="flex items-center space-x-2.5">
               <button
                 onClick={onToggleMute}
-                className="text-white/40 hover:text-white transition-colors"
+                className="text-white/35 hover:text-white transition-colors"
                 title={isMuted ? 'Desativar Mudo' : 'Silenciar'}
               >
                 {isMuted || volume === 0 ? (
@@ -251,15 +210,15 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
                 step="0.05"
                 value={isMuted ? 0 : volume}
                 onChange={(e) => onChangeVolume(Number(e.target.value))}
-                className="w-16 h-1 bg-white/20 rounded-full accent-[#9575CD] cursor-pointer"
+                className="w-16 h-0.5 bg-white/15 rounded-full accent-[#9575CD] cursor-pointer"
                 aria-label="Volume"
               />
             </div>
 
-            {/* Tela cheia */}
+            {/* Alternar Tela Cheia */}
             <button
               onClick={onToggleFullscreen}
-              className="text-white/40 hover:text-white transition-colors"
+              className="text-white/35 hover:text-white transition-colors"
               title="Tela Cheia (F)"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">

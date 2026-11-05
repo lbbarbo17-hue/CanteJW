@@ -174,44 +174,74 @@ export const StageView: React.FC = () => {
   }, [isProducerOpen, handleNextTrack]);
 
   return (
-    <main className="w-screen h-screen bg-[#1A1A2E] text-white overflow-hidden p-8 lg:p-10 xl:p-12 flex flex-col font-sans select-none">
+    <main className="w-screen h-screen bg-[#1A1A2E] text-white overflow-hidden p-8 lg:p-12 flex flex-col font-sans select-none">
       {/* 
-        1. Top Bar Editorial:
-        Apenas tipografia pura sobre o fundo sólido #1A1A2E.
+        1. CABEÇALHO E LOGO ("CANTE") & HIERARQUIA DO TÍTULO:
+        - Canto superior esquerdo: Logo "CANTE" em tipografia fina, espaçada e sofisticada (#FFFFFF)
+          com detalhe minimalista em Soft Lavender (#9575CD).
+        - Logo abaixo: Título da música atual de forma sutil, pequena e elegante, com artista acinzentado,
+          ocupando o mínimo espaço vertical para dar respiro total às letras.
+        - Canto superior direito: Botão do Modo Produtor com glassmorphism sutil, borda ultrafina em #4A148C,
+          ícone discreto e transição suave.
       */}
-      <header className="flex items-center justify-between pb-4 select-none shrink-0">
-        <div className="flex items-center space-x-3">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#9575CD]" />
-          <h1 className="text-xs font-semibold tracking-[0.25em] uppercase text-white/80">
-            Cante <span className="text-white/30 font-light tracking-[0.2em]">/ MODO LETRAS</span>
-          </h1>
+      <header className="flex items-start justify-between pb-4 select-none shrink-0">
+        <div className="space-y-1.5">
+          {/* Logo Minimalista Cante */}
+          <div className="flex items-center">
+            <span className="text-white font-light text-base lg:text-lg tracking-[0.35em] uppercase">
+              Cante
+            </span>
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#9575CD] ml-2 mb-0.5" />
+          </div>
+
+          {/* Título da Música Atual (Pequeno, Elegante e Sutil) */}
+          {currentTrack && (
+            <div className="flex items-center space-x-2 text-xs text-white/40 font-light tracking-wide pt-0.5">
+              <span className="text-white/85 font-normal tracking-tight">
+                {currentTrack.song.title}
+              </span>
+              <span className="text-white/20">—</span>
+              <span className="text-white/45">
+                {currentTrack.song.artist}
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="text-white/35">
+                Pedida por <strong className="text-white/70 font-normal">{currentTrack.requestedBy}</strong>
+              </span>
+            </div>
+          )}
         </div>
 
+        {/* Botão do Modo Produtor (Glassmorphism sutil com borda ultrafina #4A148C) */}
         <div className="flex items-center space-x-4">
           <button
             onClick={() => setIsProducerOpen(true)}
-            className="flex items-center space-x-2 text-xs font-mono text-white/40 hover:text-white transition-colors"
+            className="flex items-center space-x-2.5 px-4 py-2 rounded-full bg-white/[0.03] hover:bg-white/[0.07] backdrop-blur-md border border-[#4A148C]/70 hover:border-[#9575CD]/60 text-white/80 hover:text-white transition-all duration-300 text-xs font-mono tracking-wider shadow-sm active:scale-95"
             title="Abrir sincronizador de timestamps (Atalho: P)"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#9575CD]" />
-            <span>MODO PRODUTOR</span>
-            <span className="text-[10px] text-white/20">[P]</span>
+            {/* Ícone Discreto de Ajuste / Produtor */}
+            <svg 
+              className="w-3.5 h-3.5 text-[#9575CD]" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor" 
+              strokeWidth="1.8"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            <span>Modo Produtor</span>
+            <span className="text-[10px] text-white/30 font-mono">[P]</span>
           </button>
-
-          <div className="flex items-center space-x-2 text-[11px] font-mono text-white/30 tracking-wider">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span>AO VIVO</span>
-          </div>
         </div>
       </header>
 
       {/* 
-        2. Layout Principal de 2 Colunas:
-        - Esquerda (~74%): Painel Tipográfico de Alta-Costura (Teleprompter de 3 linhas).
-        - Direita (~26%): Fila de reprodução e QR Code perfeitamente alinhados no fundo sólido.
-        - Separação exclusivamente por espaçamento generoso (whitespace).
+        2. LAYOUT PRINCIPAL EM 2 COLUNAS:
+        - Esquerda (~74%): Painel Central de Letras (Teleprompter de 3 linhas com respiro generoso).
+        - Direita (~26%): Fila de Reprodução ("A Seguir") e QR Code flutuando organizados por espaçamento.
+        - Separação exclusivamente por espaço em branco (whitespace).
       */}
-      <div className="flex-1 w-full grid grid-cols-12 gap-8 lg:gap-14 min-h-0">
+      <div className="flex-1 w-full grid grid-cols-12 gap-10 lg:gap-16 min-h-0 pt-2">
         {/* Coluna Central da Tela de Letras */}
         <section 
           className="col-span-12 lg:col-span-8 xl:col-span-9 h-full min-h-0 flex flex-col"
@@ -232,12 +262,11 @@ export const StageView: React.FC = () => {
             onToggleMute={() => setIsMuted((prev) => !prev)}
             onChangeVolume={setVolume}
             onToggleFullscreen={handleToggleFullscreen}
-            onOpenProducer={() => setIsProducerOpen(true)}
             onMouseMove={handleMouseMove}
           />
         </section>
 
-        {/* Coluna da Fila e QR Code (Flutuando diretamente no fundo sólido #1A1A2E) */}
+        {/* Coluna da Fila e QR Code ("A Seguir") */}
         <section 
           className="col-span-12 lg:col-span-4 xl:col-span-3 h-full min-h-0"
           aria-label="Fila de espera e código de acesso"
