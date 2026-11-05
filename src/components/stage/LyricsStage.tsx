@@ -16,6 +16,7 @@ interface LyricsStageProps {
   onToggleMute: () => void;
   onChangeVolume: (volume: number) => void;
   onToggleFullscreen: () => void;
+  onOpenProducer: () => void;
   onMouseMove: () => void;
 }
 
@@ -34,6 +35,7 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
   onToggleMute,
   onChangeVolume,
   onToggleFullscreen,
+  onOpenProducer,
   onMouseMove,
 }) => {
   // Identifica o índice da linha ativa atual
@@ -46,7 +48,7 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
   const currentLine = lyrics[activeIndex] || null;
   const nextLine = activeIndex < lyrics.length - 1 ? lyrics[activeIndex + 1] : null;
 
-  // Formatação de tempo segura (mm:ss)
+  // Formatação segura de tempo (mm:ss)
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -61,23 +63,68 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
       className="relative w-full h-full flex flex-col justify-between select-none"
     >
       {/* 
-        1. PAINEL CENTRAL DE LETRAS (FLUXO TELEPROMPTER / MODO MÚSICA):
-        - Palco tipográfico puro com foco e respiro vertical absoluto.
-        - Exibe estritamente 3 linhas verticais organizadas por espaçamento generoso:
-          1. Linha anterior: sutil, menor e opaca.
-          2. Linha atual ativa: centralizada, em destaque com Soft Lavender (#9575CD).
-          3. Próxima linha: abaixo, com opacidade suave.
-        - Zero caixas, zero bordas, zero fundos coloridos. Tipografia pura flutuando em #1A1A2E.
+        1. CABEÇALHO DA COLUNA ESQUERDA:
+        - Canto superior esquerdo: APENAS a Logo "CANTE" em Branco Puro (#FFFFFF) com ponto em Soft Lavender (#9575CD).
+        - Canto superior direito da coluna: Botão discreto do Modo Produtor com efeito glassmorphism sutil.
+        - Nenhuma informação de música fica solta ou colada horizontalmente no topo da tela.
       */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
-        <div className="max-w-4xl w-full flex flex-col items-center justify-center space-y-8 lg:space-y-12">
+      <header className="flex items-center justify-between shrink-0 pt-1 pb-4">
+        {/* Logo Minimalista Cante */}
+        <div className="flex items-center">
+          <span className="text-white font-light text-base lg:text-lg tracking-[0.35em] uppercase">
+            CANTE
+          </span>
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#9575CD] ml-2 mb-0.5" />
+        </div>
+
+        {/* Botão de Alta Estética para o Modo Produtor */}
+        <button
+          onClick={onOpenProducer}
+          className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] hover:bg-white/[0.07] backdrop-blur-md border border-[#4A148C]/70 hover:border-[#9575CD]/60 text-white/70 hover:text-white transition-all duration-300 text-xs font-mono tracking-wider active:scale-95"
+          title="Abrir sincronizador de timestamps (Atalho: P)"
+        >
+          <svg 
+            className="w-3.5 h-3.5 text-[#9575CD]" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor" 
+            strokeWidth="1.8"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+          <span>Modo Produtor</span>
+          <span className="text-[10px] text-white/30 font-mono">[P]</span>
+        </button>
+      </header>
+
+      {/* 
+        2. BLOCO CENTRAL: METADADOS DA MÚSICA ATUAL + PALCO TIPOGRÁFICO DE LETRAS
+        - Acima: Bloco de metadados discreto e elegante centralizado (título moderado + artista/quem pediu acinzentado).
+        - Abaixo: Palco de 3 linhas do teleprompter (anterior, ativa em #9575CD, próxima) com respiro vertical total.
+      */}
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-4 py-4 min-h-0">
+        
+        {/* Bloco de Metadados Centralizado (Discreto e Elegante) */}
+        {currentTrack && (
+          <div className="mb-6 lg:mb-8 space-y-1">
+            <h2 className="text-xl lg:text-2xl font-medium tracking-tight text-white/95">
+              {currentTrack.song.title}
+            </h2>
+            <p className="text-xs lg:text-sm font-light text-white/40 tracking-wide">
+              {currentTrack.song.artist} <span className="text-white/20 mx-1.5">•</span> Pedida por <span className="text-white/70 font-normal">{currentTrack.requestedBy}</span>
+            </p>
+          </div>
+        )}
+
+        {/* Palco Tipográfico de Letras (Estritamente 3 Linhas / Fluxo Teleprompter) */}
+        <div className="max-w-4xl w-full flex flex-col items-center justify-center space-y-7 lg:space-y-10">
           
           {/* Linha Anterior (Sutil e Opaca) */}
-          <div className="h-10 lg:h-14 flex items-center justify-center">
+          <div className="h-10 lg:h-12 flex items-center justify-center">
             {prevLine ? (
               <p 
                 onClick={() => onSeek(prevLine.time)}
-                className="text-white/25 text-xl sm:text-2xl lg:text-3xl font-light tracking-wide cursor-pointer hover:text-white/45 transition-all duration-700"
+                className="text-white/25 text-lg sm:text-xl lg:text-2xl font-light tracking-wide cursor-pointer hover:text-white/45 transition-all duration-700"
               >
                 {prevLine.text}
               </p>
@@ -87,11 +134,11 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
           </div>
 
           {/* Linha Atual Ativa (Em Destaque Absoluto - Soft Lavender #9575CD) */}
-          <div className="min-h-[5rem] sm:min-h-[6rem] lg:min-h-[7rem] flex items-center justify-center px-2">
+          <div className="min-h-[4.5rem] sm:min-h-[5.5rem] lg:min-h-[6.5rem] flex items-center justify-center px-2">
             {currentLine ? (
               <p 
                 key={currentLine.id}
-                className="text-[#9575CD] text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-normal tracking-tight leading-tight transition-all duration-500 animate-fadeIn"
+                className="text-[#9575CD] text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-normal tracking-tight leading-tight transition-all duration-500 animate-fadeIn"
               >
                 {currentLine.text}
               </p>
@@ -102,12 +149,12 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
             )}
           </div>
 
-          {/* Próxima Linha (Logo Abaixo com Opacidade Suave) */}
-          <div className="h-10 lg:h-14 flex items-center justify-center">
+          {/* Próxima Linha (Abaixo com Opacidade Suave) */}
+          <div className="h-10 lg:h-12 flex items-center justify-center">
             {nextLine ? (
               <p 
                 onClick={() => onSeek(nextLine.time)}
-                className="text-white/35 text-xl sm:text-2xl lg:text-3xl font-light tracking-wide cursor-pointer hover:text-white/55 transition-all duration-700"
+                className="text-white/35 text-lg sm:text-xl lg:text-2xl font-light tracking-wide cursor-pointer hover:text-white/55 transition-all duration-700"
               >
                 {nextLine.text}
               </p>
@@ -120,17 +167,18 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
       </div>
 
       {/* 
-        2. BARRA DE CONTROLE INFERIOR FLUTUANTE:
-        - Afastada das bordas da tela com padding generoso (pb-4 pt-4 px-2).
+        3. BARRA DE CONTROLE INFERIOR FLUTUANTE:
+        - Ancorada na parte inferior da coluna esquerda.
+        - Margens (padding) generosas para nunca encostar nas bordas da tela.
         - Ícones minimalistas e linha de progresso ultrafina em Soft Lavender (#9575CD).
       */}
       <div 
-        className={`pt-6 pb-2 transition-opacity duration-300 shrink-0 ${
+        className={`pt-6 pb-4 px-2 transition-opacity duration-300 shrink-0 ${
           isControlsVisible || !isPlaying ? 'opacity-100' : 'opacity-20 hover:opacity-100'
         }`}
       >
         {/* Linha de Progresso Ultrafina (1px / 2px) */}
-        <div className="relative mb-5 group/scrubber cursor-pointer">
+        <div className="relative mb-4 group/scrubber cursor-pointer">
           <div className="w-full h-0.5 bg-white/10 rounded-full overflow-hidden transition-all group-hover/scrubber:h-1">
             <div
               className="h-full bg-[#9575CD] rounded-full transition-all duration-150"
@@ -148,7 +196,7 @@ export const LyricsStage: React.FC<LyricsStageProps> = ({
           />
         </div>
 
-        {/* Linha de Ações Minimalistas */}
+        {/* Linha de Ações: Play, Skip, Marcador de Tempo, Volume e Fullscreen */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-5">
             {/* Play / Pause */}
